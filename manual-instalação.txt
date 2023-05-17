@@ -1,0 +1,65 @@
+
+
+Certifique de está conectado com a internet
+Baixe o sincronizador beta teste
+acesse pelo navegador Copie esse link -> https://github.com/jadsonHub/sincronizador
+Procure pelo nome <>Code
+Depois de localizar ele clique em <>Code
+Procure por Download zip
+Clique e espere o Download
+Extraia os arquivos com o winrar usando o comando extrair aqui ou extrat here
+
+
+Para fazer a instalação
+
+   Da pasta Download ou de onde voçe deixou salvo o sincronizador-main
+   Abra o sincronizador-main
+   Copie o sincronizador-main
+   Cole na pasta  caminho "C:\Orbita"
+   Renomeie o sincronizador-main para sincronizador
+
+Instalando dependencias do sincronizador
+
+   Navegue ate a pasta raiz do sincronizador execute como administrador o INSTALLDEPENDENCIA.bat
+   Aguarde a finalização
+
+Cadastrando a loja
+
+   Navegue ate a pasta raiz do sincronizador
+   Execute o SERVER.bat
+   Informe o cnpj master cadastrado pelo administrador
+   Informe o cnpj da loja, caso n tenha deixar vazio
+   Informe o nome da loja e clique em cadastar espere o retorno Loja cadastrada com sucesso!
+
+Testando  com o debug
+
+  Navegue ate a pasta raiz do sincronizador
+  Execute como administrador o DEBUG.bat
+  E Aguarde finalizar
+  Se tiver erros entre em contato com o suporte!
+
+Iniciando serviço 
+
+  Navegue atá a pasta raiz do sincronizador
+  Execute como administrador INITSYSTEM.bat
+  Aguarde finalizar!
+  Reinicie o compudator
+  O serviço vai ser levantado e vai subir os registros para a nuvem
+
+  Para fazer o login na plataforma acesse esse link -> https://orbitadashboard.azurewebsites.net/
+  Com o usuario criado pelo administrador
+  
+
+Instalando dependencias do windows caso necessario!
+   Se caso os passos acima tenha dado erros de dll faltando,
+   Siga esses passos abaixo e tente novamente!
+   Navegue até a pasta DllWindowsResolver,
+   Execute o VisualCpp
+   Ele é responsavel por instalar dlls que talvez os clientes não tenham instalado na maquina
+   Aguarde finalizar
+   E refaça os seguintes passos:
+       Instalando dependencias do sincronizador
+       Testando  com o debug
+
+
+
