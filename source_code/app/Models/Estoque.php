@@ -10,11 +10,6 @@ class Estoque extends Model
 {
     use HasFactory;
 
-
-   
-
-
-
     public function enviarEstoque()
     {
         $estoque = new  RepositorioEstoque();

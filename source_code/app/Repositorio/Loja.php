@@ -20,8 +20,8 @@ class Loja
     {
         $this->certificado = 'app/cacert.pem';
         $this->loja = new ModelsLoja();
-         //$this->url = "https://orbitadashboard.azurewebsites.net/api/";
-        $this->url = 'http://127.0.0.1:8000/api/';
+        $this->url = "https://orbitadashboard.azurewebsites.net/api/";
+        //$this->url = 'http://127.0.0.1:8000/api/';
     }
 
     public function getLoja($id)
@@ -182,7 +182,7 @@ class Loja
 
             $getUsuario = $usuario->getCredencial($cnpj);
 
-         
+
             $response =  $cliente->post($this->url . 'auth/user', [
                 "headers" => [
                     "Authorization" => "Bearer {$access_token}",

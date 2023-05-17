@@ -7,6 +7,7 @@ use App\Models\Estoque;
 use App\Models\Loja;
 use App\Models\Usuario;
 use App\Models\Venda;
+use App\Models\Vendedor;
 use App\Util\HelperUtil;
 use Exception;
 use GuzzleHttp\Client;
@@ -28,9 +29,9 @@ class MainSinc extends Command
      */
     protected $description = 'Inicio do serviço';
 
-    //protected $url = "https://orbitadashboard.azurewebsites.net/api/";
+    protected $url = "https://orbitadashboard.azurewebsites.net/api/";
 
-    protected $url = "http://127.0.0.1:8000/api/";
+   // protected $url = "http://127.0.0.1:8000/api/";
     protected $certificado = "app/cacert.pem";
 
 
@@ -65,20 +66,22 @@ class MainSinc extends Command
                 //busca ou cadastra a loja
                 echo "Serviço cadastrar loja! \n";
                 $this->getLoja($access_token, $user['id']);
+                echo "Serviço cadastar vendedor! \n";
+                $this->cadastrarVendedores($access_token);
                 //deleta a venda
-                echo "Serviço deletar  venda! \n";
+             //   echo "Serviço deletar  venda! \n";
              //   $this->deleteBigData($access_token, 'venda');
                 //cadastra venda
                 echo "Serviço cadastrar venda! \n";
                 $this->cadastrarVendas($access_token);
                 //deleta o caixa
-                echo "Serviço deletar caixa! \n";
+            //    echo "Serviço deletar caixa! \n";
                // $this->deleteBigData($access_token, 'caixa');
                 //cadastar caixa
                 echo "Serviço cadastrar caixa! \n";
                 $this->cadastrarCaixas($access_token);
                 //deletar estoque
-                echo "Serviço deletar estoque! \n";
+             //   echo "Serviço deletar estoque! \n";
                // $this->deleteBigData($access_token, 'estoque');
                 //cadastrar estoque
                 echo "Serviço cadastrar estoque! \n";
@@ -296,6 +299,41 @@ class MainSinc extends Command
             ]);
             var_dump(json_decode($response->getBody()->getContents()));
             return true;
+        } catch (Exception $e) {
+            var_dump(['deu erro' => $e->getMessage()]);
+            die();
+        }
+    }
+
+
+     public function cadastrarVendedores($access_token = "")
+    {
+        try {
+            $vendedor = new Vendedor();
+            $responses = [];
+            $qtdAtual = 0;
+
+            echo "Cadastro Vendedor \n";
+            $vendedores = $vendedor->enviarVendedores();
+            $chuncks = array_chunk($vendedores, 1000);
+            $cliente  = new Client([
+            'verify' => storage_path($this->certificado), // Caminho completo para o arquivo cacert.pem
+        ]);
+            foreach ($chuncks as $chunk) {
+                $response =  $cliente->post($this->url . 'auth/cadastro/vendedor', [
+                    "headers" => [
+                        "Authorization" => "Bearer {$access_token}",
+                        "Content-Type" => "application/json; charset=utf-8",
+                    ],
+                    "body" => json_encode($chunk)
+                ]);
+                $responses[] = json_decode($response->getBody()->getContents());
+                $qtdAtual += count($chunk);
+                var_dump($responses);
+                echo "Qtd vendedor  $qtdAtual \n";
+                echo "Cadastro finalizado vendedor \n";
+                sleep(3);
+            }
         } catch (Exception $e) {
             var_dump(['deu erro' => $e->getMessage()]);
             die();
