@@ -20,7 +20,7 @@ class Loja
     {
         $this->certificado = 'app/cacert.pem';
         $this->loja = new ModelsLoja();
-        //$this->url = "https://orbitadashboard.azurewebsites.net/api/";
+       // $this->url = "https://orbitadashboard.azurewebsites.net/api/";
         $this->url = 'http://127.0.0.1:8000/api/';
     }
 

@@ -7,6 +7,8 @@ use App\Models\Estoque;
 use App\Models\Loja;
 use App\Models\Usuario;
 use App\Models\Venda;
+use App\Models\VendasAno;
+use App\Models\VendasDia;
 use App\Models\Vendedor;
 use App\Util\HelperUtil;
 use Exception;
@@ -29,7 +31,7 @@ class MainSinc extends Command
      */
     protected $description = 'Inicio do serviço';
 
-   // protected $url = "https://orbitadashboard.azurewebsites.net/api/";
+    // protected $url = "https://orbitadashboard.azurewebsites.net/api/";
 
     protected $url = "http://127.0.0.1:8000/api/";
     protected $certificado = "app/cacert.pem";
@@ -46,12 +48,11 @@ class MainSinc extends Command
         try {
             date_default_timezone_set('America/Sao_Paulo');
             $hora_init = date('H:i:s');
-            //  var_dump($responseData);die();
             if ($this->statusServidor()) {
                 //autenticador da api
                 $cliente  = new Client([
-            'verify' => storage_path($this->certificado), // Caminho completo para o arquivo cacert.pem
-        ]);
+                    'verify' => storage_path($this->certificado), // Caminho completo para o arquivo cacert.pem
+                ]);
                 $response = $cliente->post($this->url . 'auth/login', [
                     "form_params" => [
                         "email" => env('SECRET_CONFIG_USERNAME'),
@@ -69,20 +70,25 @@ class MainSinc extends Command
                 echo "Serviço cadastar vendedor! \n";
                 $this->cadastrarVendedores($access_token);
                 //deleta a venda
-             //   echo "Serviço deletar  venda! \n";
-             //   $this->deleteBigData($access_token, 'venda');
+                //   echo "Serviço deletar  venda! \n";
+                //   $this->deleteBigData($access_token, 'venda');
                 //cadastra venda
+                echo "Cadastro venda diaria \n";
+                $this->cadastrarVendasDia($access_token);
+               
+                echo "Cadastro venda ano \n";
+                $this->cadastrarVendasAno($access_token);
                 echo "Serviço cadastrar venda! \n";
                 $this->cadastrarVendas($access_token);
                 //deleta o caixa
-            //    echo "Serviço deletar caixa! \n";
-               // $this->deleteBigData($access_token, 'caixa');
+                //    echo "Serviço deletar caixa! \n";
+                // $this->deleteBigData($access_token, 'caixa');
                 //cadastar caixa
                 echo "Serviço cadastrar caixa! \n";
                 $this->cadastrarCaixas($access_token);
                 //deletar estoque
-             //   echo "Serviço deletar estoque! \n";
-               // $this->deleteBigData($access_token, 'estoque');
+                //   echo "Serviço deletar estoque! \n";
+                // $this->deleteBigData($access_token, 'estoque');
                 //cadastrar estoque
                 echo "Serviço cadastrar estoque! \n";
                 $this->cadastrarEstoque($access_token);
@@ -102,8 +108,8 @@ class MainSinc extends Command
             $loja = new Loja();
 
             $cliente = new Client([
-            'verify' => storage_path($this->certificado), // Caminho completo para o arquivo cacert.pem
-        ]);
+                'verify' => storage_path($this->certificado), // Caminho completo para o arquivo cacert.pem
+            ]);
 
             $getLoja = $loja->getLoja($id);
 
@@ -128,8 +134,8 @@ class MainSinc extends Command
             $usuario = new Usuario();
 
             $cliente = new Client([
-            'verify' => storage_path($this->certificado), // Caminho completo para o arquivo cacert.pem
-        ]);
+                'verify' => storage_path($this->certificado), // Caminho completo para o arquivo cacert.pem
+            ]);
 
             $getUsuario = $usuario->getCredencial();
 
@@ -158,8 +164,8 @@ class MainSinc extends Command
                 $vendas = $venda->enviarVendas($ano);
                 $chuncks = array_chunk($vendas, 1000);
                 $cliente  = new Client([
-            'verify' => storage_path($this->certificado), // Caminho completo para o arquivo cacert.pem
-        ]);
+                    'verify' => storage_path($this->certificado), // Caminho completo para o arquivo cacert.pem
+                ]);
                 foreach ($chuncks as $chunk) {
                     $response =  $cliente->post($this->url . 'auth/cadastro/venda', [
                         "headers" => [
@@ -193,8 +199,8 @@ class MainSinc extends Command
                 $caixas = $caixa->enviarCaixas($ano);
                 $chuncks = array_chunk($caixas, 1000);
                 $cliente  = new Client([
-            'verify' => storage_path($this->certificado), // Caminho completo para o arquivo cacert.pem
-        ]);
+                    'verify' => storage_path($this->certificado), // Caminho completo para o arquivo cacert.pem
+                ]);
                 foreach ($chuncks as $chunk) {
                     $response =  $cliente->post($this->url . 'auth/cadastro/caixa', [
                         "headers" => [
@@ -228,8 +234,8 @@ class MainSinc extends Command
             $estoques = $estoque->enviarEstoque();
             $chuncks = array_chunk($estoques, 1000);
             $cliente  = new Client([
-            'verify' => storage_path($this->certificado), // Caminho completo para o arquivo cacert.pem
-        ]);
+                'verify' => storage_path($this->certificado), // Caminho completo para o arquivo cacert.pem
+            ]);
             foreach ($chuncks as $chunk) {
                 $response =  $cliente->post($this->url . 'auth/cadastro/estoque', [
                     "headers" => [
@@ -257,8 +263,8 @@ class MainSinc extends Command
             echo "verificando conexão internet \n";
             if (HelperUtil::verificarInternet()) {
                 $cliente = new Client([
-            'verify' => storage_path($this->certificado), // Caminho completo para o arquivo cacert.pem
-        ]);
+                    'verify' => storage_path($this->certificado), // Caminho completo para o arquivo cacert.pem
+                ]);
                 $response =     $cliente->get($this->url . 'servidor/status', [
                     "headers" => [
                         "Content-Type" => "application/json; charset=utf-8"
@@ -287,8 +293,8 @@ class MainSinc extends Command
     {
         try {
             $cliente = new Client([
-            'verify' => storage_path($this->certificado), // Caminho completo para o arquivo cacert.pem
-        ]);
+                'verify' => storage_path($this->certificado), // Caminho completo para o arquivo cacert.pem
+            ]);
             $delete = HelperUtil::configDelet();
             $response = $cliente->post($this->url . "auth/cadastro/{$prefix}/delete/bigdata", [
                 "headers" => [
@@ -306,7 +312,7 @@ class MainSinc extends Command
     }
 
 
-     public function cadastrarVendedores($access_token = "")
+    public function cadastrarVendedores($access_token = "")
     {
         try {
             $vendedor = new Vendedor();
@@ -317,8 +323,8 @@ class MainSinc extends Command
             $vendedores = $vendedor->enviarVendedores();
             $chuncks = array_chunk($vendedores, 1000);
             $cliente  = new Client([
-            'verify' => storage_path($this->certificado), // Caminho completo para o arquivo cacert.pem
-        ]);
+                'verify' => storage_path($this->certificado), // Caminho completo para o arquivo cacert.pem
+            ]);
             foreach ($chuncks as $chunk) {
                 $response =  $cliente->post($this->url . 'auth/cadastro/vendedor', [
                     "headers" => [
@@ -333,6 +339,77 @@ class MainSinc extends Command
                 echo "Qtd vendedor  $qtdAtual \n";
                 echo "Cadastro finalizado vendedor \n";
                 sleep(3);
+            }
+        } catch (Exception $e) {
+            var_dump(['deu erro' => $e->getMessage()]);
+            die();
+        }
+    }
+
+    public function cadastrarVendasAno($access_token = "")
+    {
+        try {
+            $vendasAno = new VendasAno();
+            $responses = [];
+            $qtdAtual = 0;
+            foreach (HelperUtil::dataArry() as $ano) {
+                echo "Cadastro vendas por ano ->  ano $ano \n";
+                $venda = $vendasAno->enviarVendasAno($ano);
+                $chuncks = array_chunk($venda, 1000);
+                $cliente  = new Client([
+                    'verify' => storage_path($this->certificado), // Caminho completo para o arquivo cacert.pem
+                ]);
+                foreach ($chuncks as $chunk) {
+                    $response =  $cliente->post($this->url . 'auth/cadastro/venda-ano', [
+                        "headers" => [
+                            "Authorization" => "Bearer {$access_token}",
+                            "Content-Type" => "application/json; charset=utf-8",
+                        ],
+                        "body" => json_encode($chunk)
+                    ]);
+                    $responses[] = json_decode($response->getBody()->getContents());
+                    $qtdAtual += count($chunk);
+                    var_dump($responses);
+                    echo "Qtd vendas por ano  ->  $ano  $qtdAtual \n";
+                    echo "Cadastro finalizado vendas por  ano ->  $ano \n";
+                    sleep(3);
+                }
+            }
+        } catch (Exception $e) {
+            var_dump(['deu erro' => $e->getMessage()]);
+            die();
+        }
+    }
+
+    public function cadastrarVendasDia($access_token = "")
+    {
+        try {
+            $vendaDia = new VendasDia();
+            $responses = [];
+            $qtdAtual = 0;
+            foreach (HelperUtil::dataArry() as $ano) {
+                echo "Cadastro vendas por dia    ano $ano \n";
+                $venda = $vendaDia->enviarVendasDia($ano);
+                $chuncks = array_chunk($venda, 1000);
+                $cliente  = new Client([
+                    'verify' => storage_path($this->certificado), // Caminho completo para o arquivo cacert.pem
+                ]);
+                foreach ($chuncks as $chunk) {
+                    $response =  $cliente->post($this->url . 'auth/cadastro/venda-dia', [
+                        "headers" => [
+                            "Authorization" => "Bearer {$access_token}",
+                            "Content-Type" => "application/json; charset=utf-8",
+                        ],
+                        "body" => json_encode($chunk)
+                    ]);
+                    $responses[] = json_decode($response->getBody()->getContents());
+                    $qtdAtual += count($chunk);
+                    var_dump($responses);
+
+                    echo "Qtd vendas por dia  ano -> ano $ano  $qtdAtual \n";
+                    echo "Cadastro finalizado vendas por dia ano ->  $ano \n";
+                    sleep(3);
+                }
             }
         } catch (Exception $e) {
             var_dump(['deu erro' => $e->getMessage()]);
