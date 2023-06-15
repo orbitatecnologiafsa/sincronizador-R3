@@ -11,8 +11,8 @@ class VendaDia
 
     public  function sqlVendaDia($ano = '')
     {
-        //$dia = $ano.'-'.date('m-d');
-        $dia = '2023-05-16';
+        $dia = $ano.'-'.date('m-d');
+        //$dia = '2023-05-16';
        // var_dump($dia);die();
         $sql = 'SELECT i."PRODUTO" as produto, i."CODIGO" as codigo,i."PRECOVENDA" as preco_venda ,i."ESTOQUE" as estoque,i."PRECOCUSTO" as preco_custo,
         r."NUMERO" as numero, v."CODNOTA" as codnota, EXTRACT(YEAR FROM r."DATA") as ano , r."DATA"as data,
