@@ -31,9 +31,9 @@ class MainSinc extends Command
      */
     protected $description = 'Inicio do serviço';
 
-    // protected $url = "https://orbitadashboard.azurewebsites.net/api/";
+     protected $url = "https://orbitadashboard.azurewebsites.net/api/";
 
-    protected $url = "http://127.0.0.1:8000/api/";
+   // protected $url = "http://127.0.0.1:8000/api/";
     protected $certificado = "app/cacert.pem";
 
 
@@ -75,7 +75,7 @@ class MainSinc extends Command
                 //cadastra venda
                 echo "Cadastro venda diaria \n";
                 $this->cadastrarVendasDia($access_token);
-               
+
                 echo "Cadastro venda ano \n";
                 $this->cadastrarVendasAno($access_token);
                 echo "Serviço cadastrar venda! \n";
