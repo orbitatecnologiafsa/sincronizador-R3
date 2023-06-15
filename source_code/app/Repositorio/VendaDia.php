@@ -20,7 +20,7 @@ class VendaDia
         FROM "C000062" as v
         JOIN "C000025" as i ON v."CODPRODUTO" = i."CODIGO"
         JOIN "C000061" as r ON r."NUMERO" = v."CODNOTA"
-        WHERE (v."QTDE") > 1 AND DATE(r."DATA") = '."'" .$dia."'".'
+        where  DATE(r."DATA") = '."'" .$dia."'".'
         GROUP BY i."PRODUTO",r."DATA",r."TOTAL_NOTA",r."NUMERO",v."CODNOTA",i."CODIGO",i."PRECOVENDA",i."ESTOQUE",i."PRECOCUSTO"
         ORDER BY total_vendido  DESC limit 10;';
         return $sql;

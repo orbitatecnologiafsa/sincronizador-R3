@@ -17,7 +17,7 @@ class VendaAno
         FROM "C000062" as v
         JOIN "C000025" as i ON v."CODPRODUTO" = i."CODIGO"
         JOIN "C000061" as r ON r."NUMERO" = v."CODNOTA"
-        where (v."QTDE") > 1 and EXTRACT(YEAR FROM r."DATA") = '.$ano.'
+        where EXTRACT(YEAR FROM r."DATA") = '.$ano.'
         GROUP BY i."PRODUTO",r."DATA",r."TOTAL_NOTA",r."NUMERO",v."CODNOTA",i."PRECOVENDA",i."PRECOCUSTO",i."CODIGO"
         ORDER BY ano,total_vendido  DESC limit 10;';
         return $sql;
