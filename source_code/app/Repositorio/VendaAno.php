@@ -12,13 +12,13 @@ class VendaAno
     public  function sqlVendaAno($ano = '')
     {
         $sql = 'SELECT i."PRODUTO" as produto, i."CODIGO" as codigo,i."PRECOVENDA" as preco_venda ,i."PRECOCUSTO" as preco_custo,
-        r."NUMERO" as numero, v."CODNOTA" as codnota, EXTRACT(YEAR FROM r."DATA") as ano ,
+        r."CODIGO" as numero, v."CODNOTA" as codnota, EXTRACT(YEAR FROM r."DATA") as ano ,
         SUM(i."PRECOVENDA"*v."QTDE") as valor_total, SUM(v."QTDE") AS total_vendido
         FROM "C000062" as v
         JOIN "C000025" as i ON v."CODPRODUTO" = i."CODIGO"
-        JOIN "C000061" as r ON r."NUMERO" = v."CODNOTA"
+        JOIN "C000061" as r ON r."CODIGO" = v."CODNOTA"
         where EXTRACT(YEAR FROM r."DATA") = '.$ano.'
-        GROUP BY i."PRODUTO",r."DATA",r."TOTAL_NOTA",r."NUMERO",v."CODNOTA",i."PRECOVENDA",i."PRECOCUSTO",i."CODIGO"
+        GROUP BY i."PRODUTO",r."DATA",r."TOTAL_NOTA",r."CODIGO",v."CODNOTA",i."PRECOVENDA",i."PRECOCUSTO",i."CODIGO"
         ORDER BY ano,total_vendido  DESC limit 10;';
         return $sql;
     }

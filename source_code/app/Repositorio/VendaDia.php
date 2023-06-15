@@ -12,16 +12,17 @@ class VendaDia
     public  function sqlVendaDia($ano = '')
     {
         $dia = $ano.'-'.date('m-d');
-        //$dia = '2023-05-16';
+        $dia = '2023-05-16';
        // var_dump($dia);die();
-        $sql = 'SELECT i."PRODUTO" as produto, i."CODIGO" as codigo,i."PRECOVENDA" as preco_venda ,i."ESTOQUE" as estoque,i."PRECOCUSTO" as preco_custo,
-        r."NUMERO" as numero, v."CODNOTA" as codnota, EXTRACT(YEAR FROM r."DATA") as ano , r."DATA"as data,
+        $sql = 'SELECT i."PRODUTO" as produto, i."CODIGO" as codigo,i."PRECOVENDA" as preco_venda ,i."ESTOQUE"
+        as estoque,i."PRECOCUSTO" as preco_custo,
+        r."CODIGO" as numero, v."CODNOTA" as codnota, EXTRACT(YEAR FROM r."DATA") as ano , r."DATA"as data,
         SUM(i."PRECOVENDA"*v."QTDE") as valor_total, SUM(v."QTDE") AS total_vendido
         FROM "C000062" as v
         JOIN "C000025" as i ON v."CODPRODUTO" = i."CODIGO"
-        JOIN "C000061" as r ON r."NUMERO" = v."CODNOTA"
+        JOIN "C000061" as r ON r."CODIGO" = v."CODNOTA"
         where  DATE(r."DATA") = '."'" .$dia."'".'
-        GROUP BY i."PRODUTO",r."DATA",r."TOTAL_NOTA",r."NUMERO",v."CODNOTA",i."CODIGO",i."PRECOVENDA",i."ESTOQUE",i."PRECOCUSTO"
+        GROUP BY i."PRODUTO",r."DATA",r."TOTAL_NOTA",r."CODIGO",v."CODNOTA",i."CODIGO",i."PRECOVENDA",i."ESTOQUE",i."PRECOCUSTO"
         ORDER BY total_vendido  DESC limit 10;';
         return $sql;
     }
@@ -52,7 +53,6 @@ class VendaDia
                 'valor_total' => $vendaDia->valor_total ?? 0,
                 'total_vendido' => $vendaDia->total_vendido ?? 0,
                 'data' => $vendaDia->data ?? $data,
-                'total_vendido' => $vendaDia->total_vendido ?? 0,
                 'estoque' => $vendaDia->estoque ?? 0,
                 'cnpj_cliente' => HelperUtil::removerMascara($select[0]->cnpj_cliente) ?? "",
                 'cnpj_loja' => HelperUtil::removerMascara($select[0]->cnpj_loja) ?? "",
@@ -61,7 +61,7 @@ class VendaDia
             ];
         }
 
-
+     
 
         return $vendaDiaMount;
     }
