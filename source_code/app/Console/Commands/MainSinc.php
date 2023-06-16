@@ -7,6 +7,7 @@ use App\Models\Estoque;
 use App\Models\Loja;
 use App\Models\Usuario;
 use App\Models\Venda;
+use App\Models\VendaProduto;
 use App\Models\VendasAno;
 use App\Models\VendasDia;
 use App\Models\Vendedor;
@@ -31,9 +32,9 @@ class MainSinc extends Command
      */
     protected $description = 'Inicio do serviço';
 
-     protected $url = "https://orbitadashboard.azurewebsites.net/api/";
+    // protected $url = "https://orbitadashboard.azurewebsites.net/api/";
 
-   // protected $url = "http://127.0.0.1:8000/api/";
+    protected $url = "http://127.0.0.1:8000/api/";
     protected $certificado = "app/cacert.pem";
 
 
@@ -155,14 +156,19 @@ class MainSinc extends Command
 
     public function cadastrarVendas($access_token = "")
     {
+       // venda-produto
         try {
             $venda = new Venda();
+            $vendasProduto = new VendaProduto();
+            $qtdAtualP = 0;
             $responses = [];
             $qtdAtual = 0;
             foreach (HelperUtil::dataArry() as $ano) {
                 echo "Cadastro Venda ano $ano \n";
                 $vendas = $venda->enviarVendas($ano);
+                $produtos = $vendasProduto->enviarVendasProduto($ano);
                 $chuncks = array_chunk($vendas, 1000);
+                $chuncksProd = array_chunk($produtos,1000);
                 $cliente  = new Client([
                     'verify' => storage_path($this->certificado), // Caminho completo para o arquivo cacert.pem
                 ]);
@@ -181,6 +187,21 @@ class MainSinc extends Command
                     sleep(3);
                 }
                 echo "Cadastro finalizado Venda ano $ano \n";
+                foreach ($chuncksProd as $chunkP) {
+                    $response =  $cliente->post($this->url . 'auth/cadastro/venda-produto', [
+                        "headers" => [
+                            "Authorization" => "Bearer {$access_token}",
+                            "Content-Type" => "application/json; charset=utf-8",
+                        ],
+                        "body" => json_encode($chunkP)
+                    ]);
+                    $responses[] = json_decode($response->getBody()->getContents());
+                    $qtdAtualP += count($chunkP);
+                    var_dump($responses);
+                    echo "Qtd vendas produtos por ano  ->  $ano  $qtdAtualP \n";
+                    echo "Cadastro finalizado vendas produto por  ano ->  $ano \n";
+                    sleep(3);
+                }
             }
         } catch (Exception $e) {
             var_dump(['deu erro' => $e->getMessage()]);
@@ -350,12 +371,17 @@ class MainSinc extends Command
     {
         try {
             $vendasAno = new VendasAno();
+
             $responses = [];
             $qtdAtual = 0;
+
+
             foreach (HelperUtil::dataArry() as $ano) {
                 echo "Cadastro vendas por ano ->  ano $ano \n";
                 $venda = $vendasAno->enviarVendasAno($ano);
+
                 $chuncks = array_chunk($venda, 1000);
+
                 $cliente  = new Client([
                     'verify' => storage_path($this->certificado), // Caminho completo para o arquivo cacert.pem
                 ]);
@@ -374,6 +400,7 @@ class MainSinc extends Command
                     echo "Cadastro finalizado vendas por  ano ->  $ano \n";
                     sleep(3);
                 }
+
             }
         } catch (Exception $e) {
             var_dump(['deu erro' => $e->getMessage()]);
@@ -416,4 +443,5 @@ class MainSinc extends Command
             die();
         }
     }
+
 }
